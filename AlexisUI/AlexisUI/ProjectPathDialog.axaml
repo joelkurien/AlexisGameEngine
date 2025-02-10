@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200"
+        x:Class="AlexisUI.ProjectPathDialog"
+        Title="ProjectPathDialog">
+	<Grid HorizontalAlignment="Right" 
+		  ColumnDefinitions="Auto,10,Auto"
+		  Margin="0,130,20,0">
+		<Button Grid.Column="0">Ok</Button>
+		<Button Grid.Column="2" Click="OnCancel">Cancel</Button>
+	</Grid>
+</Window>

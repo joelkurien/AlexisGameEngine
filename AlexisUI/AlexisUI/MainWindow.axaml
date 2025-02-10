@@ -1,0 +1,64 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AlexisUI;assembly=AlexisUI"
+		xmlns:datatypes="clr-namespace:AlexisUI.DataTypes"
+		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AlexisUI.MainWindow"
+		x:CompileBindings="True"
+        Title="AlexisUI">
+
+	<StackPanel>
+		<Grid ColumnDefinitions="Auto,10,Auto"
+			  HorizontalAlignment="Left"
+			  VerticalAlignment="Top"
+			  Margin="10,10,0,10">
+			<Button Content="New Project" Name="newProject" Grid.Column="0" Click="OnButtonClick" />
+			<Button Content="Open Project" Name="oldProject" Grid.Column="2" Click="OnButtonClick" />
+		</Grid>
+		<Grid HorizontalAlignment="Center" ColumnDefinitions="Auto,3,Auto">
+			<Border Name="openNewProject" Height="600" Width="800" Grid.Column="2">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="300" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.2*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<TreeView Grid.Column="0"
+								  Margin="10,0,10,0"
+								  Name="treeExplorer"
+								  SelectionChanged="DisplaySelectedFile">
+							<TreeView.ItemTemplate>
+								<TreeDataTemplate DataType="datatypes:FileItem" ItemsSource="{Binding Files}">
+									<TextBlock Text="{Binding FileName}"/>
+								</TreeDataTemplate>
+							</TreeView.ItemTemplate>
+						</TreeView>
+						<Panel Grid.Column="1">
+							<Image Name="ideViewer" />
+						</Panel>
+					</Grid>
+					<StackPanel Grid.Row="1">
+						<Grid Margin="0,0,5,5">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<TextBox Grid.Column="0" Name="FileName" Width="730" HorizontalAlignment="Left"></TextBox>
+							<Button Grid.Column="1" Content="Save" HorizontalAlignment="Right"/>
+						</Grid>
+						<TextBox Name="FilePath"></TextBox>
+					</StackPanel>
+				</Grid>			
+			</Border>
+			<Border Name="openOldProject" Height="600" Width="800" Grid.Column="4">
+				<TextBlock Background="Crimson">Old Project</TextBlock>
+			</Border>
+		</Grid>
+	</StackPanel>
+</Window>
