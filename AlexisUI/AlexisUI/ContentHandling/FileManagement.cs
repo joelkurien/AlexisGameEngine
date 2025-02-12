@@ -4,29 +4,22 @@ using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using System.Collections.Generic;
 using System.Linq;
+using AlexisUI.ContentHandling.Interfaces;
 
-namespace AlexisUI;
-public class FileManagement
+namespace AlexisUI.ContentHandling;
+public class FileManagement : FileManagementInterface
 {
-	public ObservableCollection<FileItem>? Folders { get; set; }
-    private MainWindow mainWindow;
-    public FileManagement(MainWindow mainWindow)
-	{
-        this.mainWindow = mainWindow;
-	}
+    public ObservableCollection<FileItem>? Folders { get; set; }
+    public FileManagement() {}
 
-    private List<ObservableCollection<FileItem>> addDefaultFiles()
+    private List<ObservableCollection<FileItem>> addProjectTypes()
     {
         ObservableCollection<FileItem> selectedFiles = new ObservableCollection<FileItem>();
         ObservableCollection<FileItem> files = new ObservableCollection<FileItem>
         {
-            new FileItem("Scene1", "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\Screenshot (10).png"),
-            new FileItem("Scene2", "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\Screenshot (16).png"),
-            new FileItem("Scene Set", new ObservableCollection<FileItem>
-            {
-                new FileItem("Scene3", "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\Screenshot (25).png"),
-                new FileItem("Scene4", "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\Screenshot (26).png")
-            })
+            new FileItem("First Person Game", "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\Screenshot (10).png"),
+            new FileItem("2D Game", "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\Screenshot (16).png"),
+            new FileItem("3D Game", "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\Screenshot (25).png"),
         };
 
         var moth = files.Last().Files?.Last();
@@ -34,9 +27,9 @@ public class FileManagement
         return new List<ObservableCollection<FileItem>> { files, selectedFiles };
     }
 
-    public void addFolderTrees(ref TreeView treeExplorer)
+    public void addProjectTypesToTrees(ref TreeView treeExplorer)
     {
-        var fileSets = addDefaultFiles();
+        var fileSets = addProjectTypes();
         Folders = fileSets[0];
         foreach (var folder in Folders)
         {
@@ -59,5 +52,10 @@ public class FileManagement
             }
             treeExplorer.Items.Add(folderItem);
         }
+    }
+
+    public void SaveAsAlxFile()
+    {
+
     }
 }
