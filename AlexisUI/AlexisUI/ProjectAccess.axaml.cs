@@ -17,7 +17,7 @@ public partial class ProjectAccess : Window
     private bool isNewProjClicked = false;
     private bool isOldProjClicked = false;
     private static bool addProjTypes = true;
-    
+    public string? SelectedTemplate { get; private set; }
     public ProjectAccess()
     {
         InitializeComponent();
@@ -42,6 +42,7 @@ public partial class ProjectAccess : Window
                     NewProjectFunction();
                 }
                 isOldProjClicked = false;
+                HandleVisibility();
             }
             else
             {
@@ -52,6 +53,7 @@ public partial class ProjectAccess : Window
                     newProj.Width = 0;
                 }
                 isNewProjClicked = false;
+                HandleVisibility();
             }
         }
     }
@@ -61,9 +63,25 @@ public partial class ProjectAccess : Window
         #region Add Default Files
         var treeExplorer = this.FindControl<TreeView>("treeExplorer");
         if(addProjTypes && treeExplorer != null)
-            _fileManagement.addProjectTypesToTrees(ref treeExplorer);
+            _fileManagement.AddProjectTypesToTrees(ref treeExplorer);
         addProjTypes = false;
         #endregion Add Default Files
+    }
+
+    private void HandleVisibility()
+    {
+        var tb1 = this.FindControl<TextBox>("fileName");
+        var tb2 = this.FindControl<TextBox>("dirPath");
+        if (!isNewProjClicked)
+        {
+            tb1.IsVisible = false;
+            tb2.IsVisible = false;
+        }
+        else
+        {
+            tb1.IsVisible = true;
+            tb2.IsVisible = true;
+        }
     }
 
     private void DisplaySelectedProject(object? sender, SelectionChangedEventArgs e)
@@ -75,6 +93,7 @@ public partial class ProjectAccess : Window
             if (selectedFile != null && !selectedFile.isFolder)
             {
                 ProjectValidation.isProjTypeSelected = true;
+                SelectedTemplate = selectedFile.FileName;
                 var projPreview = this.FindControl<Image>("projPreview");
                 if (projPreview != null)
                 {
@@ -90,11 +109,33 @@ public partial class ProjectAccess : Window
         var outcome = false;
         TextBox? fileName = this.FindControl<TextBox>("fileName");
         TextBox? dirPath = this.FindControl<TextBox>("dirPath");
+        string projName = fileName != null && !string.IsNullOrEmpty(fileName.Text) ? fileName.Text : "";
+        string projPath = dirPath != null && !string.IsNullOrEmpty(dirPath.Text) ? dirPath.Text : "";
         if(fileName != null && dirPath != null &&
             fileName.Text != null && dirPath.Text != null)
-            if(await _projectValidation.ValidateProjectCreation(fileName.Text, dirPath.Text))
+        {
+            if (await _projectValidation.ValidateProjectCreation(fileName.Text, dirPath.Text))
             {
                 outcome = true;
             }
+        }
+
+        #region Validation on Project Create
+        var errorMsgBlock = this.FindControl<TextBlock>("CreateErrorMsg");
+        if (!outcome)
+        {
+            errorMsgBlock.Text = "Unable to create file in this location. Please Try Again";
+            errorMsgBlock.IsVisible = true;
+        }
+        else
+        {
+            errorMsgBlock.IsVisible = false;
+        }
+        #endregion Validation on Project Create
+
+        if (SelectedTemplate != null)
+        {
+            _fileManagement.CreateProject(SelectedTemplate, projName, projPath);
+        }
     }
 }
