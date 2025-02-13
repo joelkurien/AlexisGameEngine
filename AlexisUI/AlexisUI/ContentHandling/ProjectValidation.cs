@@ -17,7 +17,10 @@ namespace AlexisUI.ContentHandling
             var isValidDir = await DirectoryLocationValidation(directoryPath);
             var isProjSelected = await Task.Run(() => ProjectTypeSelectionValidation());
             var isProjNameValid = await Task.Run(() => ProjectNameValidation(fileName));
-            return isValidDir && isProjSelected && isProjNameValid;
+            var isProjCreated = false;
+            if (isValidDir && isProjNameValid)
+                isProjCreated = await Task.Run(() => Directory.Exists(Path.Combine(directoryPath, fileName)) );
+            return isValidDir && isProjSelected && isProjNameValid && !isProjCreated;
         }
         private Task<bool> DirectoryLocationValidation(string directoryPath)
         {

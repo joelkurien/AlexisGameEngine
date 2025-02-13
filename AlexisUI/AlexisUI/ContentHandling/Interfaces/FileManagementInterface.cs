@@ -9,6 +9,7 @@ namespace AlexisUI.ContentHandling.Interfaces
 {
     public interface FileManagementInterface
     {
-        public void addProjectTypesToTrees(ref TreeView treeExplorer);
+        public void AddProjectTypesToTrees(ref TreeView treeExplorer);
+        public void CreateProject(string templateType, string projName, string projPath);
     }
 }
