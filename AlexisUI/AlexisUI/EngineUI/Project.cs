@@ -5,26 +5,30 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace AlexisUI.EngineUI
 {
-    [DataContract]
+    [Serializable]
     public class Project
     {
-        [DataMember]
-        public string ProjectName { get; private set; }
+        [XmlElement("Projct")]
+        public string ProjectName { get; set; }
         
-        [DataMember]
-        public string ProjectPath { get; private set; }
+        [XmlElement("Project Location")]
+        public string ProjectPath { get; set; }
 
-        private ObservableCollection<Scene> _scenes;
+        private ObservableCollection<Scene> _scenes = new ObservableCollection<Scene>();
 
-        [DataMember]
-        public ObservableCollection<Scene> Scenes { get; private set; }
+        [XmlElement("Scenes")]
+        public ObservableCollection<Scene> Scenes { get { return _scenes; } set { _scenes = value; } }
 
-        public Project(string projPath)
+        public Project() { }
+        public Project(string projName, string projPath)
         {
+            ProjectName = projName;
             ProjectPath = projPath;
+            _scenes.Add(new Scene(this, "Base Scene"));
         }
     }
 }
