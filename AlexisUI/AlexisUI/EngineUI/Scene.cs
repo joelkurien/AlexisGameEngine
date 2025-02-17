@@ -5,24 +5,24 @@ using System.Runtime.Serialization;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace AlexisUI.EngineUI
 {
-    [DataContract]
+    [Serializable]
     public class Scene
     {
-        [DataMember]
-        public string ProjectName { get; private set; }
+        [XmlIgnore]
+        public Project Project { get; set; }
 
-        [DataMember]
-        public string SceneName { get; private set; }
-
-        [DataMember]
-        public string ScenePath { get; private set; }
-
-        public Scene()
+        [XmlElement("SceneName")]
+        public string SceneName { get; set; }
+        
+        public Scene() { }
+        public Scene(Project project, string name)
         {
-            
+            Project = project;
+            SceneName = name;
         }
     }
 }

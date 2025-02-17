@@ -24,5 +24,8 @@
     <Compile Update="ProjectAccess.axaml.cs">
       <DependentUpon>ProjectAccess.axaml</DependentUpon>
     </Compile>
+    <Compile Update="CreateProject.axaml.cs">
+      <DependentUpon>CreateProject.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

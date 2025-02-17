@@ -9,15 +9,17 @@ using System.IO;
 using System.Text.Json;
 using AlexisUI.EngineUI;
 using System.Security;
+using System.Diagnostics;
 
 namespace AlexisUI.ContentHandling;
 public class FileManagement : FileManagementInterface
 {
     private readonly ProjectValidationInterface _projectValidate = new ProjectValidation();
     public ObservableCollection<FileItem>? Folders { get; set; }
-    public FileManagement() {}
+    private readonly string _metadataDirectory = Path.Combine(FileConstants.HomePath, "Metadata");
 
-    private List<ObservableCollection<FileItem>> AddProjectTypes()
+    #region Add Project Types
+    private ObservableCollection<FileItem> AddProjectTypes()
     {
         ObservableCollection<FileItem> selectedFiles = new ObservableCollection<FileItem>();
         ObservableCollection<FileItem> files = new ObservableCollection<FileItem>
@@ -26,16 +28,15 @@ public class FileManagement : FileManagementInterface
             new FileItem("2D Game", "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\Screenshot (16).png"),
             new FileItem("3D Game", "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\Screenshot (25).png"),
         };
-
-        var moth = files.Last().Files?.Last();
-        if (moth != null) selectedFiles.Add(moth);
-        return new List<ObservableCollection<FileItem>> { files, selectedFiles };
+        return files;
     }
+    #endregion Add Project Types
 
-    public void AddProjectTypesToTrees(ref TreeView treeExplorer)
+    #region Add Files to a Folder Tree
+    public void AddFilesToTrees(ref TreeView tree, ObservableCollection<FileItem> fileSet)
     {
-        var fileSets = AddProjectTypes();
-        Folders = fileSets[0];
+        Folders = fileSet;
+        tree.Items.Clear();
         foreach (var folder in Folders)
         {
             var folderItem = new TreeViewItem
@@ -55,10 +56,17 @@ public class FileManagement : FileManagementInterface
                     folderItem.Items.Add(fileItem);
                 }
             }
-            treeExplorer.Items.Add(folderItem);
+            tree.Items.Add(folderItem);
         }
     }
 
+    public void AddProjectTypesToTree(ref TreeView tree)
+    {
+        AddFilesToTrees(ref tree, AddProjectTypes());
+    }
+    #endregion Add Files to a Folder Tree
+
+    #region Create Project
     public async void CreateProject(string templateType, string projName, string projPath)
     {
         if(await _projectValidate.ValidateProjectCreation(projName, projPath))
@@ -83,9 +91,30 @@ public class FileManagement : FileManagementInterface
     public void CreateProjectAsAlx(string projName, DirectoryInfo projDir)
     {
         string projFile = Path.Combine(projDir.FullName, projName + ".alx");
-        Project project = new Project(projFile);
-        string projJson = JsonSerializer.Serialize(project, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(projFile, projJson);
+        Project project = new Project(projName, projFile);
+        Serializer.SaveFile<Project>(project, projFile);
+        ProjectMetadata projectMetadata = new ProjectMetadata(projName, projFile);
+        string metadataPath = CreateMetadataFile(projName, projFile);
     }
 
+    public string CreateMetadataFile(string projName, string projPath)
+    {
+        string metadataPath = "";
+        try
+        {
+            if (!Directory.Exists(_metadataDirectory))
+            {
+                DirectoryInfo dirInfo = Directory.CreateDirectory(_metadataDirectory);
+            }
+            metadataPath = Path.Combine(_metadataDirectory, projName + ".alxn");
+            ProjectMetadata projectMetadata = new ProjectMetadata(projName, projPath);
+            Serializer.SaveFile<ProjectMetadata>(projectMetadata, metadataPath);
+        }
+        catch (Exception ex)
+        {
+            Debug.Write(ex.ToString());
+        }
+        return metadataPath;
+    }
+    #endregion Create Project
 }

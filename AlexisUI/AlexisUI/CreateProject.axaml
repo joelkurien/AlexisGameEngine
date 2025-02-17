@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:local="clr-namespace:AlexisUI;assembly=AlexisUI"
+			 xmlns:datatypes="clr-namespace:AlexisUI.DataTypes"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AlexisUI.CreateProject">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="300" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid Grid.Row="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="0.3*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<TreeView Grid.Column="0"
+					  Margin="10,0,10,0"
+					  Name="treeExplorer"
+					  SelectionChanged="DisplaySelectedProject">
+				<TreeView.ItemTemplate>
+					<TreeDataTemplate DataType="datatypes:FileItem" ItemsSource="{Binding Files}">
+						<TextBlock Text="{Binding FileName}" HorizontalAlignment="Left"/>
+					</TreeDataTemplate>
+				</TreeView.ItemTemplate>
+			</TreeView>
+			<Panel Grid.Column="1">
+				<Image Name="projPreview" />
+			</Panel>
+		</Grid>
+		<StackPanel Grid.Row="1">
+			<Grid Margin="0,0,5,5">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<TextBlock Grid.Column="0">Project Name</TextBlock>
+				<TextBox Grid.Column="1" Grid.Row="0" Name="fileName" Width="600"
+						 HorizontalAlignment="Left" IsVisible="true"></TextBox>
+				<Button Margin="0,5,10,0" Grid.Column="2" Grid.Row="0" Content="Save"
+						HorizontalAlignment="Right" Click="SaveProjectType"/>
+				<TextBlock Grid.Row="2" Grid.Column="0">Project Location</TextBlock>
+				<TextBox Margin="0,5,0,0" Grid.Row="2" Grid.Column="1" Name="dirPath" IsVisible="true"></TextBox>
+			</Grid>
+			<TextBlock Name="CreateErrorMsg" IsVisible="false"/>
+		</StackPanel>
+	</Grid>
+</UserControl>
