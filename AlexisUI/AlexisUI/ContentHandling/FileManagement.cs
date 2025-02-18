@@ -10,6 +10,7 @@ using System.Text.Json;
 using AlexisUI.EngineUI;
 using System.Security;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace AlexisUI.ContentHandling;
 public class FileManagement : FileManagementInterface
@@ -67,34 +68,51 @@ public class FileManagement : FileManagementInterface
     #endregion Add Files to a Folder Tree
 
     #region Create Project
-    public async void CreateProject(string templateType, string projName, string projPath)
+    public async Task<string> CreateProject(string templateType, string projName, string projPath)
     {
-        if(await _projectValidate.ValidateProjectCreation(projName, projPath))
-        {
-            DirectoryInfo projDir = Directory.CreateDirectory(Path.Combine(projPath, projName));
-            switch (templateType)
+        string projLoc = "";
+        try { 
+            if (await _projectValidate.ValidateProjectCreation(projName, projPath))
             {
-                case "First Person Game":
-                    var sourceImage = "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\Screenshot (10).png";
+                DirectoryInfo projDir = Directory.CreateDirectory(Path.Combine(projPath, projName));
+                if (templateType == "First Person Game")
+                {
+                    var sourceImage = "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\" + FileConstants.FPSScreenshot;
                     string newImage = Path.Combine(projDir.FullName, Path.GetFileName(sourceImage));
                     File.Copy(sourceImage, newImage, overwrite: true);
-                    CreateProjectAsAlx(projName, projDir);
-                    break;
-                case "2D Game":
-                    break;
-                case "3D Game":
-                    break;
+                    projLoc = CreateProjectAsAlx(projName, projDir);
+                }
+                else if (templateType == "3D Game")
+                {
+                    var sourceImage = "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\" + FileConstants.ThreeDScreenshot;
+                    string newImage = Path.Combine(projDir.FullName, Path.GetFileName(sourceImage));
+                    File.Copy(sourceImage, newImage, overwrite: true);
+                    projLoc = CreateProjectAsAlx(projName, projDir);
+                }
+                else if (templateType == "2D Game")
+                {
+                    var sourceImage = "C:\\Users\\susan\\OneDrive\\Pictures\\Screenshots\\" + FileConstants.TwoDScreenshot;
+                    string newImage = Path.Combine(projDir.FullName, Path.GetFileName(sourceImage));
+                    File.Copy(sourceImage, newImage, overwrite: true);
+                    projLoc = CreateProjectAsAlx(projName, projDir);
+                }
             }
         }
+        catch(Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+        }
+        return projLoc;
     }
 
-    public void CreateProjectAsAlx(string projName, DirectoryInfo projDir)
+    public string CreateProjectAsAlx(string projName, DirectoryInfo projDir)
     {
         string projFile = Path.Combine(projDir.FullName, projName + ".alx");
         Project project = new Project(projName, projFile);
         Serializer.SaveFile<Project>(project, projFile);
         ProjectMetadata projectMetadata = new ProjectMetadata(projName, projFile);
         string metadataPath = CreateMetadataFile(projName, projFile);
+        return projFile;
     }
 
     public string CreateMetadataFile(string projName, string projPath)

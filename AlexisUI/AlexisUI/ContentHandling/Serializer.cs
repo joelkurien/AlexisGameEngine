@@ -12,7 +12,7 @@ using System.Xml.Serialization;
 
 namespace AlexisUI.ContentHandling
 {
-    public class Serializer
+    public static class Serializer
     {
         public static void SaveFile<T>(T content, string filePath)
         {
@@ -30,6 +30,13 @@ namespace AlexisUI.ContentHandling
             }
         }
     
+        public static T DeserializeXML<T>(string filePath) where T : class
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            using (XmlReader reader = XmlReader.Create(filePath)) {
+                return serializer.Deserialize(reader) as T;
+            }
+        }
         public static IDictionary<string, string> ReadMetadataFile(string metadataPath)
         {
             IDictionary<string, string> metaDataContent = new Dictionary<string, string>();
