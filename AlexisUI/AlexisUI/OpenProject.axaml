@@ -7,22 +7,29 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AlexisUI.OpenProject">
 	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="0.3*" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<TreeView Grid.Column="0"
-				  Margin="10,0,10,0"
-				  Name="projectExplorer"
-				  SelectionChanged="DisplaySelectedOpenProject">
-			<TreeView.ItemTemplate>
-				<TreeDataTemplate DataType="datatypes:FileItem" ItemsSource="{Binding Files}">
-					<TextBlock Text="{Binding FileName}" HorizontalAlignment="Left"/>
-				</TreeDataTemplate>
-			</TreeView.ItemTemplate>
-		</TreeView>
-		<Panel Grid.Column="1">
-			<Image Name="openProjImage" />
-		</Panel>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid Grid.Row="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="0.3*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<TreeView Grid.Column="0"
+					  Margin="10,0,10,0"
+					  Name="projectExplorer"
+					  SelectionChanged="DisplaySelectedOpenProject">
+				<TreeView.ItemTemplate>
+					<TreeDataTemplate DataType="datatypes:FileItem" ItemsSource="{Binding Files}">
+						<TextBlock Text="{Binding FileName}" HorizontalAlignment="Left"/>
+					</TreeDataTemplate>
+				</TreeView.ItemTemplate>
+			</TreeView>
+			<Panel Grid.Column="1">
+				<Image Name="openProjImage" />
+			</Panel>
+		</Grid>
+		<Button Grid.Row="1" HorizontalAlignment="Right" Click="OpenSelectedProject">Open</Button>
 	</Grid>
 </UserControl>

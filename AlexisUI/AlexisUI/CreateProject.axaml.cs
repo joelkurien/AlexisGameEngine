@@ -1,6 +1,7 @@
 using AlexisUI.ContentHandling;
 using AlexisUI.ContentHandling.Interfaces;
 using AlexisUI.DataTypes;
+using AlexisUI.EngineUI;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -85,12 +86,12 @@ public partial class CreateProject : UserControl
 
         #region Validation on Project Create
         var errorMsgBlock = this.FindControl<TextBlock>("CreateErrorMsg");
-        if (!outcome)
+        if (!outcome && errorMsgBlock != null)
         {
             errorMsgBlock.Text = "Unable to create file in this location. Please Try Again";
             errorMsgBlock.IsVisible = true;
         }
-        else
+        else if(errorMsgBlock != null) 
         {
             errorMsgBlock.IsVisible = false;
         }
@@ -98,7 +99,12 @@ public partial class CreateProject : UserControl
 
         if (SelectedTemplate != null)
         {
-            _fileManagement.CreateProject(SelectedTemplate, projName, projPath);
+            var projectLocation = await _fileManagement.CreateProject(SelectedTemplate, projName, projPath);
+            if (projectLocation != "")
+            {
+                Project project = Serializer.DeserializeXML<Project>(projectLocation);
+                Debug.WriteLine(project.ProjectName);
+            }
         }
     }
 
